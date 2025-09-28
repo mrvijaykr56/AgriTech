@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.agritech.entity.Farmer;
@@ -70,5 +71,10 @@ public class FarmerController {
                     return ResponseEntity.noContent().<Void>build();
                 })
                 .orElse(ResponseEntity.notFound().build());
+    }
+    
+    @GetMapping("/search")
+    public List<Farmer> searchFarmersByVillage(@RequestParam String village) {
+        return farmerRepository.findByVillageContainingIgnoreCase(village);
     }
 }

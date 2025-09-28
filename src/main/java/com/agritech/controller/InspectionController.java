@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.agritech.dto.InspectionDTO;
 import com.agritech.entity.Field;
 import com.agritech.entity.Inspection;
 import com.agritech.repo.FieldRepo;
@@ -28,41 +29,48 @@ public class InspectionController {
         this.fieldRepo = fieldRepo;
     }
 
-    // ✅ Get all inspections
+    // ✅ Get all inspections (as DTOs)
     @GetMapping
-    public List<Inspection> getAllInspections() {
-        return inspectionRepo.findAll();
+    public List<InspectionDTO> getAllInspections() {
+        return inspectionRepo.findAll()
+                .stream()
+                .map(InspectionDTO::fromEntity)
+                .toList();
     }
 
     // ✅ Get inspection by ID
     @GetMapping("/{id}")
-    public ResponseEntity<Inspection> getInspectionById(@PathVariable String id) {
+    public ResponseEntity<InspectionDTO> getInspectionById(@PathVariable String id) {
         return inspectionRepo.findById(id)
+                .map(InspectionDTO::fromEntity)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     // ✅ Get inspections by fieldId
     @GetMapping("/field/{fieldId}")
-    public ResponseEntity<List<Inspection>> getInspectionsByField(@PathVariable Long fieldId) {
+    public ResponseEntity<List<InspectionDTO>> getInspectionsByField(@PathVariable Long fieldId) {
         return fieldRepo.findById(fieldId)
-                .map(field -> ResponseEntity.ok(inspectionRepo.findByFieldOrderByCreatedAtDesc(field)))
+                .map(field -> inspectionRepo.findByFieldOrderByCreatedAtDesc(field)
+                        .stream()
+                        .map(InspectionDTO::fromEntity)
+                        .toList())
+                .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     // ✅ Create new inspection
     @PostMapping
-    public ResponseEntity<Inspection> createInspection(@RequestBody Inspection inspection) {
-        // Ensure field exists
+    public ResponseEntity<InspectionDTO> createInspection(@RequestBody Inspection inspection) {
         if (inspection.getField() == null || inspection.getField().getFieldId() == null) {
             return ResponseEntity.badRequest().build();
         }
-        Field field = fieldRepo.findById(inspection.getField().getFieldId())
-                .orElse(null);
+        Field field = fieldRepo.findById(inspection.getField().getFieldId()).orElse(null);
         if (field == null) return ResponseEntity.notFound().build();
 
         inspection.setField(field);
-        return ResponseEntity.ok(inspectionRepo.save(inspection));
+        Inspection saved = inspectionRepo.save(inspection);
+        return ResponseEntity.ok(InspectionDTO.fromEntity(saved));
     }
 
     // ✅ Delete inspection

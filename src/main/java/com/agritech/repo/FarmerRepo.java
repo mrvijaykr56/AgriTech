@@ -25,4 +25,6 @@ public interface FarmerRepo extends JpaRepository<Farmer, Long> {
 
     // Example: find by name containing (case-insensitive search)
     List<Farmer> findByNameContainingIgnoreCase(String keyword);
+    
+    List<Farmer> findByVillageContainingIgnoreCase(String village);
 }

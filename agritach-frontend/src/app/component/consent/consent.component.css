@@ -1,0 +1,9 @@
+table {
+  font-size: 0.95rem;
+}
+input, button {
+  font-size: 0.95rem;
+}
+.card-header {
+  font-weight: 600;
+}

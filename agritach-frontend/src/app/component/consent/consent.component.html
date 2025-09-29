@@ -1,0 +1,85 @@
+<div class="container py-4">
+  <h2 class="text-success mb-4">Consent Tracker</h2>
+
+  <!-- Alerts -->
+  <div *ngIf="error" class="alert alert-danger alert-dismissible fade show" role="alert">
+    {{ error }}
+    <button type="button" class="btn-close" (click)="error = ''"></button>
+  </div>
+  <div *ngIf="success" class="alert alert-success alert-dismissible fade show" role="alert">
+    {{ success }}
+    <button type="button" class="btn-close" (click)="success = ''"></button>
+  </div>
+
+  <!-- Search Farmer -->
+  <div class="card mb-4">
+    <div class="card-body row g-3 align-items-end">
+      <div class="col-md-4">
+        <label class="form-label">Farmer ID</label>
+        <input type="number" [(ngModel)]="farmerId" name="farmerId" class="form-control" placeholder="Enter Farmer ID" />
+      </div>
+      <div class="col-md-auto">
+        <button class="btn btn-success" (click)="fetch()" [disabled]="loading">Fetch</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Farmer Details -->
+  <div *ngIf="details" class="card mb-4">
+    <div class="card-header bg-success text-white">Farmer Details</div>
+    <div class="card-body">
+      <p><strong>Name:</strong> {{ details.farmer.name }}</p>
+      <p><strong>Mobile:</strong> {{ details.farmer.mobile || '-' }}</p>
+      <p><strong>Village:</strong> {{ details.farmer.village || '-' }}</p>
+      <p>
+        <strong>Consent:</strong>
+        <span class="badge" [ngClass]="details.farmer.consentGiven ? 'bg-success' : 'bg-secondary'">
+          {{ details.farmer.consentGiven ? 'Yes' : 'No' }}
+        </span>
+      </p>
+    </div>
+  </div>
+
+  <!-- Record Consent -->
+  <div *ngIf="details" class="card mb-4">
+    <div class="card-header bg-success text-white">Record Consent</div>
+    <div class="card-body row g-3">
+      <div class="col-md-8">
+        <input [(ngModel)]="note" name="note" class="form-control" placeholder="Optional note..." />
+      </div>
+      <div class="col-md-auto d-flex gap-2">
+        <button class="btn btn-outline-success" (click)="record(true)" [disabled]="loading">Give Consent</button>
+        <button class="btn btn-outline-danger" (click)="record(false)" [disabled]="loading">Withdraw Consent</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Consent Logs -->
+  <div *ngIf="details?.logs?.length" class="card mb-4">
+    <div class="card-header bg-success text-white">Consent History</div>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-success">
+            <tr>
+              <th>Date</th>
+              <th>Value</th>
+              <th>Note</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let log of details?.logs">
+              <td>{{ log.recordedAt | date:'medium' }}</td>
+              <td>
+                <span class="badge" [ngClass]="log.consentValue ? 'bg-success' : 'bg-secondary'">
+                  {{ log.consentValue ? 'Yes' : 'No' }}
+                </span>
+              </td>
+              <td>{{ log.note || '-' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

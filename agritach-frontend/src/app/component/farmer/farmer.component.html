@@ -1,0 +1,140 @@
+<div class="container py-4">
+  <div class="d-flex flex-wrap align-items-center justify-content-between mb-3">
+    <h2 class="text-success mb-2">Farmers</h2>
+    <div class="d-flex align-items-center gap-2">
+      <span *ngIf="loading" class="spinner-border spinner-border-sm text-success" role="status" aria-hidden="true"></span>
+      <small *ngIf="loading" class="text-success">Loading...</small>
+    </div>
+  </div>
+
+  <!-- Alerts -->
+  <div *ngIf="error" class="alert alert-danger alert-dismissible fade show" role="alert">
+    {{ error }}
+    <button type="button" class="btn-close" aria-label="Close" (click)="error = ''"></button>
+  </div>
+  <div *ngIf="success" class="alert alert-success alert-dismissible fade show" role="alert">
+    {{ success }}
+    <button type="button" class="btn-close" aria-label="Close" (click)="success = ''"></button>
+  </div>
+
+  <!-- Search -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <div class="row g-3 align-items-end">
+        <div class="col-12 col-md-6 col-lg-4">
+          <label class="form-label">Search by village</label>
+          <input [(ngModel)]="searchVillage" name="searchVillage" class="form-control" placeholder="e.g., Rampur" />
+        </div>
+        <div class="col-12 col-md-auto">
+          <button class="btn btn-success me-2" (click)="search()" [disabled]="loading">Search</button>
+          <button class="btn btn-outline-secondary" (click)="reset()" [disabled]="loading">Reset</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add New Farmer -->
+  <div class="card mb-4">
+    <div class="card-header bg-success text-white">Add New Farmer</div>
+    <div class="card-body">
+      <form (ngSubmit)="addFarmer()" #createForm="ngForm" class="row g-3">
+        <div class="col-12 col-md-6 col-lg-3">
+          <label class="form-label">Name</label>
+          <input [(ngModel)]="newFarmer.name" name="name" class="form-control" placeholder="Name" required />
+        </div>
+        <div class="col-12 col-md-6 col-lg-3">
+          <label class="form-label">Mobile</label>
+          <input [(ngModel)]="newFarmer.mobile" name="mobile" class="form-control" placeholder="Mobile" />
+        </div>
+        <div class="col-12 col-md-6 col-lg-3">
+          <label class="form-label">Village</label>
+          <input [(ngModel)]="newFarmer.village" name="village" class="form-control" placeholder="Village" />
+        </div>
+        <div class="col-12 col-md-6 col-lg-3 d-flex align-items-center">
+          <div class="form-check mt-4">
+            <input type="checkbox" [(ngModel)]="newFarmer.consentGiven" name="consentGiven" class="form-check-input" id="consentCheck" />
+            <label class="form-check-label" for="consentCheck">Consent Given</label>
+          </div>
+        </div>
+        <div class="col-12">
+          <button type="submit" class="btn btn-success" [disabled]="loading || !createForm.form.valid">Create</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Farmer List -->
+  <div class="card mb-4">
+    <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+      <span>Farmer List</span>
+      <small class="text-white-50">Total: {{ farmers.length }}</small>
+    </div>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-success">
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Mobile</th>
+              <th>Village</th>
+              <th>Consent</th>
+              <th class="text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let f of farmers">
+              <td>{{ f.farmerId }}</td>
+              <td>{{ f.name }}</td>
+              <td>{{ f.mobile || '-' }}</td>
+              <td>{{ f.village || '-' }}</td>
+              <td>
+                <span class="badge" [ngClass]="f.consentGiven ? 'bg-success' : 'bg-secondary'">
+                  {{ f.consentGiven ? 'Yes' : 'No' }}
+                </span>
+              </td>
+              <td class="text-end">
+                <button class="btn btn-sm btn-outline-primary me-2" (click)="selectFarmer(f)" [disabled]="loading">Edit</button>
+                <button class="btn btn-sm btn-outline-danger" (click)="deleteFarmer(f.farmerId!)" [disabled]="loading">Delete</button>
+              </td>
+            </tr>
+            <tr *ngIf="!loading && farmers.length === 0">
+              <td colspan="6" class="text-center py-4 text-muted">No farmers found.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Farmer -->
+  <div *ngIf="selectedFarmer" class="card mb-4">
+    <div class="card-header bg-success text-white">Edit Farmer (ID: {{ selectedFarmer?.farmerId }})</div>
+    <div class="card-body">
+      <form (ngSubmit)="updateFarmer()" #editForm="ngForm" class="row g-3">
+        <div class="col-12 col-md-6 col-lg-4">
+          <label class="form-label">Name</label>
+          <input [(ngModel)]="selectedFarmer.name" name="edit_name" class="form-control" placeholder="Name" required />
+        </div>
+        <div class="col-12 col-md-6 col-lg-4">
+          <label class="form-label">Mobile</label>
+          <input [(ngModel)]="selectedFarmer.mobile" name="edit_mobile" class="form-control" placeholder="Mobile" />
+        </div>
+        <div class="col-12 col-md-6 col-lg-4">
+          <label class="form-label">Village</label>
+          <input [(ngModel)]="selectedFarmer.village" name="edit_village" class="form-control" placeholder="Village" />
+        </div>
+        <div class="col-12">
+          <div class="form-check">
+            <input type="checkbox" [(ngModel)]="selectedFarmer.consentGiven" name="edit_consent" class="form-check-input" id="editConsentCheck" />
+            <label class="form-check-label" for="editConsentCheck">Consent Given</label>
+          </div>
+        </div>
+        <div class="col-12 d-flex gap-2">
+          <button type="submit" class="btn btn-success" [disabled]="loading || !editForm.form.valid">Save</button>
+          <button type="button" class="btn btn-secondary" (click)="cancelEdit()" [disabled]="loading">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

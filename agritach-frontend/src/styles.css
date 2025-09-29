@@ -1,0 +1,42 @@
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.nav-link.active {
+  font-weight: bold;
+  color: #fff !important;
+  background-color: #218838;
+  border-radius: 5px;
+  padding: 0.5rem 1rem;
+}
+
+h2, h3 {
+  font-weight: 600;
+}
+
+.table th, .table td {
+  vertical-align: middle;
+}
+
+button {
+  min-width: 80px;
+}
+
+.text-decoration-line-through {
+  text-decoration: line-through;
+}
+
+footer {
+  background-color: #343a40;
+  color: #ffffff;
+  text-align: center;
+  padding: 1rem 0;
+  font-size: 0.9rem;
+}

@@ -1,0 +1,131 @@
+<div class="container py-4">
+  <h2 class="text-success mb-4">Inspections</h2>
+
+  <!-- Alerts -->
+  <div *ngIf="error" class="alert alert-danger alert-dismissible fade show">
+    {{ error }}
+    <button type="button" class="btn-close" (click)="error = ''"></button>
+  </div>
+  <div *ngIf="success" class="alert alert-success alert-dismissible fade show">
+    {{ success }}
+    <button type="button" class="btn-close" (click)="success = ''"></button>
+  </div>
+
+  <!-- Filter by Field -->
+  <div class="card mb-4">
+    <div class="card-body row g-3 align-items-end">
+      <div class="col-md-4">
+        <label class="form-label">Field ID</label>
+        <input [(ngModel)]="fieldIdFilter" name="fieldIdFilter" class="form-control" placeholder="Enter Field ID" />
+      </div>
+      <div class="col-md-auto">
+        <button class="btn btn-success me-2" (click)="loadByField()">Filter</button>
+        <button class="btn btn-outline-secondary" (click)="loadAll()">Reset</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create Inspection -->
+  <div class="card mb-4">
+    <div class="card-header bg-success text-white">Add New Inspection</div>
+    <div class="card-body">
+      <form (ngSubmit)="createInspection()" #createForm="ngForm" class="row g-3">
+        <div class="col-md-3">
+          <label class="form-label">Field ID</label>
+          <input [(ngModel)]="newInspection.fieldId" name="fieldId" type="number" class="form-control" required />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Commodity</label>
+          <input [(ngModel)]="newInspection.commodity" name="commodity" class="form-control" required />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Label</label>
+          <input [(ngModel)]="newInspection.label" name="label" class="form-control" required />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Confidence (%)</label>
+          <input type="number" [(ngModel)]="newInspection.confidence" name="confidence" class="form-control" required />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Risk Level</label>
+          <select [(ngModel)]="newInspection.riskLevel" name="riskLevel" class="form-select" required>
+            <option value="">Select</option>
+            <option>LOW</option>
+            <option>MEDIUM</option>
+            <option>HIGH</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Latitude</label>
+          <input type="number" [(ngModel)]="newInspection.latitude" name="latitude" class="form-control" />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Longitude</label>
+          <input type="number" [(ngModel)]="newInspection.longitude" name="longitude" class="form-control" />
+        </div>
+        <div class="col-12">
+          <button type="submit" class="btn btn-success" [disabled]="!createForm.form.valid">Create</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Inspection List -->
+  <div class="card">
+    <div class="card-header bg-success text-white d-flex justify-content-between">
+      <span>Inspection List</span>
+      <small>Total: {{ inspections.length }}</small>
+    </div>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-success">
+            <tr>
+              <th>ID</th>
+              <th>Field ID</th>
+              <th>Commodity</th>
+              <th>Label</th>
+              <th>Confidence</th>
+              <th>Risk</th>
+              <th>Lat</th>
+              <th>Lng</th>
+              <th>Created At</th>
+              <th class="text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let i of inspections">
+              <td>{{ i.inspectionId }}</td>
+              <td>{{ i.fieldId }}</td>
+              <td>{{ i.commodity }}</td>
+              <td>{{ i.label }}</td>
+              <td>{{ i.confidence }}%</td>
+              <td>
+                <span class="badge" [ngClass]="{
+                  'bg-success': i.riskLevel === 'LOW',
+                  'bg-warning text-dark': i.riskLevel === 'MEDIUM',
+                  'bg-danger': i.riskLevel === 'HIGH'
+                }">
+                  {{ i.riskLevel }}
+                </span>
+              </td>
+              <td>{{ i.latitude ?? '-' }}</td>
+              <td>{{ i.longitude ?? '-' }}</td>
+              <td>{{ i.createdAt | date:'short' }}</td>
+              <td class="text-end">
+              <button 
+                class="btn btn-sm btn-outline-danger" 
+                (click)="deleteInspection(i.inspectionId)">
+                Delete
+              </button>
+              </td>
+            </tr>
+            <tr *ngIf="inspections.length === 0">
+              <td colspan="10" class="text-center py-4 text-muted">No inspections found.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

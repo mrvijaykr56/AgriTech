@@ -1,0 +1,102 @@
+<div class="container py-4">
+  <div class="d-flex flex-wrap align-items-center justify-content-between mb-3">
+    <h2 class="text-success mb-2">Funding Milestones</h2>
+    <div class="d-flex align-items-center gap-2">
+      <span *ngIf="loading" class="spinner-border spinner-border-sm text-success" role="status" aria-hidden="true"></span>
+      <small *ngIf="loading" class="text-success">Loading...</small>
+    </div>
+  </div>
+
+  <!-- Alerts -->
+  <div *ngIf="error" class="alert alert-danger alert-dismissible fade show" role="alert">
+    {{ error }}
+    <button type="button" class="btn-close" aria-label="Close" (click)="error = ''"></button>
+  </div>
+  <div *ngIf="success" class="alert alert-success alert-dismissible fade show" role="alert">
+    {{ success }}
+    <button type="button" class="btn-close" aria-label="Close" (click)="success = ''"></button>
+  </div>
+
+  <!-- Create / Update Milestone -->
+  <div class="card mb-4">
+    <div class="card-header bg-success text-white">
+      {{ selected.id ? 'Edit Milestone' : 'Add New Milestone' }}
+    </div>
+    <div class="card-body">
+      <form (ngSubmit)="save()" #milestoneForm="ngForm" class="row g-3">
+        <div class="col-12 col-md-6 col-lg-4">
+          <label class="form-label">Code</label>
+          <input [(ngModel)]="selected.code" name="code" class="form-control" placeholder="Unique code" required />
+        </div>
+        <div class="col-12 col-md-6 col-lg-4">
+          <label class="form-label">Title</label>
+          <input [(ngModel)]="selected.title" name="title" class="form-control" placeholder="Title" />
+        </div>
+        <div class="col-12">
+          <label class="form-label">Description</label>
+          <textarea [(ngModel)]="selected.description" name="description" class="form-control" rows="3" placeholder="Description"></textarea>
+        </div>
+        <div class="col-12 col-md-6 col-lg-4">
+          <label class="form-label">Due Date</label>
+          <input type="date" [(ngModel)]="selected.dueDate" name="dueDate" class="form-control" />
+        </div>
+        <div class="col-12 col-md-6 col-lg-4">
+          <label class="form-label">Evidence URL</label>
+          <input [(ngModel)]="selected.evidenceUrl" name="evidenceUrl" class="form-control" placeholder="e.g., https://..." />
+        </div>
+        <div class="col-12 col-md-6 col-lg-4 d-flex align-items-center">
+          <div class="form-check mt-4">
+            <input type="checkbox" [(ngModel)]="selected.achieved" name="achieved" class="form-check-input" id="achievedCheck" />
+            <label class="form-check-label" for="achievedCheck">Achieved</label>
+          </div>
+        </div>
+        <div class="col-12 d-flex gap-2">
+          <button type="submit" class="btn btn-success" [disabled]="loading || !milestoneForm.form.valid">Save</button>
+          <button type="button" class="btn btn-secondary" (click)="resetForm()" [disabled]="loading">Reset</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Milestone List -->
+  <div class="card mb-4">
+    <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+      <span>Milestone List</span>
+      <small class="text-white-50">Total: {{ milestones.length }}</small>
+    </div>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-success">
+            <tr>
+              <th>Code</th>
+              <th>Title</th>
+              <th>Due Date</th>
+              <th>Achieved</th>
+              <th class="text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let m of milestones">
+              <td>{{ m.code }}</td>
+              <td>{{ m.title }}</td>
+              <td>{{ m.dueDate | date }}</td>
+              <td>
+                <span class="badge" [ngClass]="m.achieved ? 'bg-success' : 'bg-secondary'">
+                  {{ m.achieved ? 'Yes' : 'No' }}
+                </span>
+              </td>
+              <td class="text-end">
+                <button class="btn btn-sm btn-outline-primary me-2" (click)="edit(m)" [disabled]="loading">Edit</button>
+                <button class="btn btn-sm btn-outline-danger" (click)="delete(m.id!)" [disabled]="loading">Delete</button>
+              </td>
+            </tr>
+            <tr *ngIf="!loading && milestones.length === 0">
+              <td colspan="5" class="text-center py-4 text-muted">No milestones found.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

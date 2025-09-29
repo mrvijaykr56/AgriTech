@@ -1,0 +1,11 @@
+table {
+  font-size: 0.95rem;
+}
+
+form input, form textarea {
+  font-size: 0.95rem;
+}
+
+button {
+  min-width: 80px;
+}

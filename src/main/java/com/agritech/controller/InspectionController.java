@@ -41,7 +41,7 @@ public class InspectionController {
     // ✅ Get inspection by ID
     @GetMapping("/{id}")
     public ResponseEntity<InspectionDTO> getInspectionById(@PathVariable String id) {
-        return inspectionRepo.findById(id)
+        return inspectionRepo.findById((long) Integer.parseInt(id))
                 .map(InspectionDTO::fromEntity)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -76,7 +76,7 @@ public class InspectionController {
     // ✅ Delete inspection
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteInspection(@PathVariable String id) {
-        return inspectionRepo.findById(id)
+        return inspectionRepo.findById((long) Integer.parseInt(id))
                 .map(inspection -> {
                     inspectionRepo.delete(inspection);
                     return ResponseEntity.noContent().<Void>build();

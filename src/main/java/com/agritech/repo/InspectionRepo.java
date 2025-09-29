@@ -9,7 +9,7 @@ import com.agritech.entity.Field;
 import com.agritech.entity.Inspection;
 
 @Repository
-public interface InspectionRepo extends JpaRepository<Inspection, String> {
+public interface InspectionRepo extends JpaRepository<Inspection, Long> {
 
     // Find inspections by field
     List<Inspection> findByField(Field field);

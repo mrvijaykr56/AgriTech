@@ -1,5 +1,7 @@
 package com.agritech.entity;
 
+import java.time.LocalDate;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -26,7 +28,7 @@ public class FundingMilestone {
   private String description;
 
   @Column(nullable = false)
-  private Long dueDate;
+  private LocalDate dueDate;
 
   @Column(nullable = false)
   private boolean achieved = false;
@@ -69,11 +71,11 @@ public class FundingMilestone {
     this.description = description;
   }
 
-  public Long getDueDate() {
+  public LocalDate getDueDate() {
     return dueDate;
   }
 
-  public void setDueDate(Long dueDate) {
+  public void setDueDate(LocalDate  dueDate) {
     this.dueDate = dueDate;
   }
 
